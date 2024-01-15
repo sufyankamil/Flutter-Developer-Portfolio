@@ -1,16 +1,3 @@
 # portfolio
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+A comprehensive Flutter portfolio app showcasing the professional journey and achievements of Mohd Sufyan Asghar Kamil. This interactive app features detailed sections on work experience, projects, key skills, certifications, and personal details, all designed with a visually appealing and user-friendly interface. Highlights include dynamic animations, custom layouts, and intuitive navigation, making it an exemplary demonstration of Flutter development capabilities.
