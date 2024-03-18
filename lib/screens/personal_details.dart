@@ -21,15 +21,7 @@ class PersonalDetailsScreen extends StatelessWidget {
         children: <Widget>[
           const DetailCard(
             icon: Icons.person,
-            title: 'Mohd Sufyan Asghar Kamil',
-          ),
-          const DetailCard(
-            icon: Icons.email,
-            title: 'sufyankamil@hotmail.com',
-          ),
-          const DetailCard(
-            icon: Icons.phone,
-            title: '9004403780',
+            title: 'Sufyan  Kamil',
           ),
           DetailCard(
             icon: FontAwesomeIcons.linkedin,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class WorkExperienceScreen extends StatelessWidget {
   const WorkExperienceScreen({super.key});
@@ -44,6 +45,41 @@ class WorkExperienceScreen extends StatelessWidget {
               'Conducted regular code reviews',
             ],
           ),
+          ExperienceTile(
+            company: 'Hasbasoft Technology Private Limited',
+            position: 'Trainee Full Stack Developer',
+            duration: 'Sept 2021 - Jan 2022',
+            responsibilities: [
+              'Participated in training program for full stack development',
+              'Assisted in the development of web applications',
+              'Learned and applied full stack development technologies and methodologies',
+              'Worked under the guidance of senior developers',
+              'Contributed to team projects and collaborated with colleagues',
+            ],
+          ),
+          ExperienceTile(
+            company: 'LetsGrowMore',
+            position: 'Web Development Intern',
+            duration: 'Aug 2021 - Sep 2021',
+            responsibilities: [
+              'Participated in web development projects under supervision',
+              'Contributed to the design and implementation of web applications',
+              'Learned and applied various web development technologies and frameworks',
+              'Assisted in debugging and troubleshooting issues in existing projects',
+            ],
+          ),
+          ExperienceTile(
+            company: 'The Sparks Foundation',
+            position: 'Web Development Intern',
+            duration: 'Jun 2021 - July 2021',
+            accomplishments: 'Ranked among the top interns',
+            responsibilities: [
+              'Engaged in web development projects and tasks',
+              'Acquired practical experience in front-end and back-end development',
+              'Collaborated with team members to achieve project goals',
+              'Demonstrated strong performance and dedication during the internship',
+            ],
+          ),
         ],
       ),
     );
@@ -52,10 +88,10 @@ class WorkExperienceScreen extends StatelessWidget {
 
 class ExperienceTile extends StatelessWidget {
   final String company;
-
   final String position;
   final String duration;
   final List<String> responsibilities;
+  final String? accomplishments;
 
   const ExperienceTile({
     super.key,
@@ -63,6 +99,7 @@ class ExperienceTile extends StatelessWidget {
     required this.position,
     required this.duration,
     required this.responsibilities,
+    this.accomplishments,
   });
 
   @override
@@ -70,18 +107,31 @@ class ExperienceTile extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(8),
-      child: ExpansionTile(
-        leading: const Icon(Icons.work_outline, color: Colors.blue),
-        title: Text('$position at $company',
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(duration),
-        children: responsibilities
-            .map((responsibility) => ListTile(
-                  title: Text(responsibility),
-                  leading: const Icon(Icons.check_circle_outline,
-                      color: Colors.green),
-                ))
-            .toList(),
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+        },
+        child: ExpansionTile(
+          leading: const Icon(Icons.work_outline, color: Colors.blue),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('$position at $company',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              if (accomplishments != null)
+                Text(accomplishments!,
+                    style: const TextStyle(color: Colors.green)),
+            ],
+          ),
+          subtitle: Text(duration),
+          children: responsibilities
+              .map((responsibility) => ListTile(
+                    title: Text(responsibility),
+                    leading: const Icon(Icons.check_circle_outline,
+                        color: Colors.green),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }

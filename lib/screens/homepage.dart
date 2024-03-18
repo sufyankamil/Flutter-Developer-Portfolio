@@ -1,12 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:portfolio/screens/certifications.dart';
+import 'package:portfolio/screens/feedback.dart';
 import 'package:portfolio/screens/projects.dart';
 import 'package:portfolio/screens/work_experiance.dart';
 
 import 'personal_details.dart';
 import 'professional_journey.dart';
-
 import 'section_title.dart';
 
 class Homepage extends StatefulWidget {
@@ -17,6 +19,39 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  late CollectionReference _visitCountCollection;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the Firestore collection reference
+    _visitCountCollection =
+        FirebaseFirestore.instance.collection('visit_count');
+    _incrementVisitCount(); // Increment the visit count when the page loads
+  }
+
+  void _incrementVisitCount() async {
+    DocumentSnapshot snapshot = await _visitCountCollection.doc('count').get();
+    int currentCount = snapshot.exists
+        ? (snapshot.data() as Map<String, dynamic>)['count'] ?? 0
+        : 0;
+    _visitCountCollection.doc('count').set({'count': currentCount + 1});
+
+   Fluttertoast.showToast(
+      msg: 'Welcome! You are visitor number ${currentCount + 1}. '
+          'Welcome to my portfolio! I\'m thrilled you\'re here. '
+          'As you explore, feel free to reach out if you have any questions or would like to connect. '
+          'Thanks for stopping by!',
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 4,
+      backgroundColor: Colors.grey,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+
+  }
+
   void navigateToProfessionalJourney() {
     Navigator.push(
       context,
@@ -62,6 +97,15 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  void navigateToFeedback() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FeedbackScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,26 +124,12 @@ class _HomepageState extends State<Homepage> {
       endDrawer: Drawer(
         child: ListView(
           children: [
-            DrawerHeader(
+            const DrawerHeader(
               child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 50.0,
-                    child: Text('SK',
-                        style: TextStyle(
-                            fontSize: 40, fontWeight: FontWeight.bold)),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width,
-                    child: const Text(
-                      'Mohd Sufyan Asghar Kamil',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      softWrap: true,
-                    ),
-                  ),
+                  nameIconWIdget(),
+                  SizedBox(height: 10),
+                  nameWidget(),
                 ],
               ),
             ),
@@ -143,6 +173,15 @@ class _HomepageState extends State<Homepage> {
                 navigateToPersonalDetails();
               },
             ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.feedback),
+              title: const Text('Feedback'),
+              onTap: () {
+                Navigator.pop(context);
+                navigateToFeedback();
+              },
+            ),
           ],
         ),
       ),
@@ -169,6 +208,20 @@ class _HomepageState extends State<Homepage> {
                   duration: Duration(milliseconds: 1200),
                 ),
                 child: professionalTitle(),
+              ),
+              StreamBuilder(
+                stream: _visitCountCollection.doc('count').snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator.adaptive();
+                  }
+
+                  return Container();
+                },
               ),
               const SizedBox(height: 20),
               FadeInUp(
@@ -247,7 +300,7 @@ class _HomepageState extends State<Homepage> {
 
   Text selfName() {
     return const Text(
-      'Mohd Sufyan Asghar Kamil',
+      'Sufyan Kamil',
       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
     );
   }
@@ -264,6 +317,40 @@ class _HomepageState extends State<Homepage> {
     return const Text(
       'Flutter Developer',
       style: TextStyle(fontSize: 17, fontStyle: FontStyle.italic),
+    );
+  }
+}
+
+class nameIconWIdget extends StatelessWidget {
+  const nameIconWIdget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const CircleAvatar(
+      radius: 50.0,
+      child: Text('SK',
+          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+    );
+  }
+}
+
+class nameWidget extends StatelessWidget {
+  const nameWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      width: MediaQuery.of(context).size.width,
+      child: const Text(
+        'Mohd Sufyan Asghar Kamil',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        softWrap: true,
+      ),
     );
   }
 }
