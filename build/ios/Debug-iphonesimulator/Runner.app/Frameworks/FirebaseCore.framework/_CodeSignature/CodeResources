@@ -21,10 +21,6 @@
 	<dict>
 		<key>FirebaseCore_Privacy.bundle/Info.plist</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			PHodr1G2S+UKnlXbs9cCfi7N80Q=
-			</data>
 			<key>hash2</key>
 			<data>
 			b/sDb8JmZlOWhY3w9wowJ2CfPJci6/dG/OkUiB0k8j8=
@@ -32,10 +28,6 @@
 		</dict>
 		<key>FirebaseCore_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			sa2OhFlqdCIyz9oV7fUdDKWzFL0=
-			</data>
 			<key>hash2</key>
 			<data>
 			EeMfX2tg6A69WQFUn85QQ/mvPmg/h0AilFAAtAUwbD8=

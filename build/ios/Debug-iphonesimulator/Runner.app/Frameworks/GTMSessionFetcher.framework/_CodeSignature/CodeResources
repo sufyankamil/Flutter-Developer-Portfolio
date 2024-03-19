@@ -21,10 +21,6 @@
 	<dict>
 		<key>GTMSessionFetcher_Core_Privacy.bundle/Info.plist</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			BwzsJAFMChZEbfUE35CJ1P/CxPE=
-			</data>
 			<key>hash2</key>
 			<data>
 			55oAUGvQLRc/T/GygOoHogrCiyswykZrg0ZDW/A61/Y=
@@ -32,10 +28,6 @@
 		</dict>
 		<key>GTMSessionFetcher_Core_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			GqeAMkwbcNQeG0K4qQhQh2vHhHo=
-			</data>
 			<key>hash2</key>
 			<data>
 			PkqTy+hqzvfdfgY6KMhJmS9Vbn9SytxfN8HosOG1RoY=
