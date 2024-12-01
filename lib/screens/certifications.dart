@@ -31,89 +31,69 @@ class CoursesCertificationsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Courses & Certifications',
           style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.deepPurple),
+              color: Colors.white),
         ),
+        backgroundColor: Colors.deepPurple,
       ),
-      body: ListView(
-        children: <Widget>[
-          ListTile(
-            title: Text(courses[0]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[1]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[2]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[3]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[4]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[5]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[6]),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[7]),
-            subtitle: GestureDetector(
-              onTap: () {
-                _launchURL(
-                    'https://coursera.org/share/5ce6bf7dfc80915a2d6e4c94c31b40d0');
-              },
-              child: const Text('Show Certificate'),
-            ),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[8]),
-            subtitle: GestureDetector(
-              onTap: () {
-                _launchURL(
-                    'https://coursera.org/share/a7aae3a3f9ab2be87a52bcc90e91cbf3');
-              },
-              child: const Text('Show Certificate'),
-            ),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[9]),
-            subtitle: GestureDetector(
-              onTap: () {
-                _launchURL(
-                    'https://coursera.org/share/64e8cb82ab8eed8662ccfaff25a90cb2');
-              },
-              child: const Text('Show Certificate'),
-            ),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-          ListTile(
-            title: Text(courses[10]),
-            subtitle: GestureDetector(
-              onTap: () {
-                _launchURL(
-                    'https://coursera.org/share/e66717db2d37d279e70f250848f9d042');
-              },
-              child: const Text('Show Certificate'),
-            ),
-            trailing: const Icon(FontAwesomeIcons.certificate),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
+          children: <Widget>[
+            for (int i = 0; i < courses.length; i++) ...[
+              Card(
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16),
+                  title: Text(
+                    courses[i],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    FontAwesomeIcons.certificate,
+                    color: Colors.deepPurple,
+                  ),
+                  subtitle: (i == 7 || i == 8 || i == 9 || i == 10)
+                      ? GestureDetector(
+                    onTap: () {
+                      _launchURL(
+                          i == 7
+                              ? 'https://coursera.org/share/5ce6bf7dfc80915a2d6e4c94c31b40d0'
+                              : i == 8
+                              ? 'https://coursera.org/share/a7aae3a3f9ab2be87a52bcc90e91cbf3'
+                              : i == 9
+                              ? 'https://coursera.org/share/64e8cb82ab8eed8662ccfaff25a90cb2'
+                              : 'https://coursera.org/share/e66717db2d37d279e70f250848f9d042');
+                      // Dynamically load the URL based on the index
+                    },
+                    child: const Text(
+                      'Show Certificate',
+                      style: TextStyle(
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  )
+                      : null,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

@@ -12,11 +12,9 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackScreenState extends State<FeedbackScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _nameController = TextEditingController();
-
-  TextEditingController _emailController = TextEditingController();
-
-  TextEditingController _feedbackController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _feedbackController = TextEditingController();
 
   @override
   void dispose() {
@@ -28,13 +26,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   void _submitFeedback() async {
     if (_formKey.currentState!.validate()) {
-      // Form is valid, proceed with saving feedback
       String name = _nameController.text;
       String email = _emailController.text;
       String feedback = _feedbackController.text;
 
       try {
-        // Save feedback data to Firestore
         await FirebaseFirestore.instance.collection('feedback').add({
           'name': name,
           'email': email,
@@ -42,7 +38,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           'timestamp': Timestamp.now(),
         });
 
-        // Clear text fields after submission
         _nameController.clear();
         _emailController.clear();
         _feedbackController.clear();
@@ -76,19 +71,33 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Feedback'),
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Feedback',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple,
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Name Field
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Name',
+                  labelStyle: const TextStyle(color: Colors.deepPurple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.deepPurple),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -98,31 +107,47 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 },
               ),
               const SizedBox(height: 20),
+
+              // Email Field
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Email ID',
+                  labelStyle: const TextStyle(color: Colors.deepPurple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.deepPurple),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email ID';
                   }
-                  // Check if the entered email is valid
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                     return 'Please enter a valid email ID';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
+
+              // Feedback Field
               TextFormField(
                 controller: _feedbackController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Feedback/Comment',
-                  alignLabelWithHint: true,
                   hintText: 'Enter your feedback or comment here',
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.deepPurple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.deepPurple),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 maxLines: 5,
                 validator: (value) {
@@ -133,13 +158,22 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  _submitFeedback();
-                },
-                child: const Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+
+              // Submit Button
+              Center(
+                child: SizedBox(
+                  width: 500,
+                  child: ElevatedButton(
+                    onPressed: _submitFeedback,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text('Submit', style: TextStyle(color: Colors.white),),
+                  ),
                 ),
               ),
             ],

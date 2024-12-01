@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio/screens/certifications.dart';
 import 'package:portfolio/screens/feedback.dart';
 import 'package:portfolio/screens/projects.dart';
 import 'package:portfolio/screens/work_experiance.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'personal_details.dart';
 import 'professional_journey.dart';
 import 'section_title.dart';
 
@@ -21,13 +22,15 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   late CollectionReference _visitCountCollection;
 
+  final Color primaryColor = const Color(0xFF6A1B9A); // Deep Purple
+  final Color secondaryColor = const Color(0xFFCE93D8); // Light Purple
+
   @override
   void initState() {
     super.initState();
-    // Initialize the Firestore collection reference
     _visitCountCollection =
         FirebaseFirestore.instance.collection('visit_count');
-    _incrementVisitCount(); // Increment the visit count when the page loads
+    _incrementVisitCount();
   }
 
   void _incrementVisitCount() async {
@@ -37,226 +40,278 @@ class _HomepageState extends State<Homepage> {
         : 0;
     _visitCountCollection.doc('count').set({'count': currentCount + 1});
 
-   Fluttertoast.showToast(
+    Fluttertoast.showToast(
       msg: 'Welcome! You are visitor number ${currentCount + 1}. '
-          'Welcome to my portfolio! I\'m thrilled you\'re here. '
-          'As you explore, feel free to reach out if you have any questions or would like to connect. '
-          'Thanks for stopping by!',
+          'Feel free to explore my portfolio!',
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 4,
-      backgroundColor: Colors.grey,
+      backgroundColor: primaryColor,
+      webBgColor: "linear-gradient(to right, #6A19BA, #CE93D8)",
       textColor: Colors.white,
-      fontSize: 16.0,
-    );
-
-  }
-
-  void navigateToProfessionalJourney() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ProfessionalJourney(),
-      ),
     );
   }
 
-  void navigateToProject() {
+  void navigateToScreen(Widget screen) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const ProjectsScreen(),
-      ),
-    );
-  }
-
-  void navigateToCertifications() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const CoursesCertificationsScreen(),
-      ),
-    );
-  }
-
-  void navigateToWorkExperience() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const WorkExperienceScreen(),
-      ),
-    );
-  }
-
-  void navigateToPersonalDetails() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const PersonalDetailsScreen(),
-      ),
-    );
-  }
-
-  void navigateToFeedback() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const FeedbackScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => screen),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [primaryColor, secondaryColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
-        ],
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              child: Column(
-                children: [
-                  nameIconWIdget(),
-                  SizedBox(height: 10),
-                  nameWidget(),
-                ],
-              ),
+          title: Text(
+            'Code & Craft',
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // Ensure text is readable on gradient
             ),
-            ListTile(
-              leading: const Icon(Icons.work_outline),
-              title: const Text('Professional Journey'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToProfessionalJourney();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.code),
-              title: const Text('Projects'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToProject();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.school),
-              title: const Text('Courses & Certifications'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCertifications();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.work),
-              title: const Text('Work Experience'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToWorkExperience();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Personal Details'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToPersonalDetails();
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.feedback),
-              title: const Text('Feedback'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToFeedback();
-              },
-            ),
-          ],
+          ),
+          backgroundColor:
+          Colors.transparent, // Set to transparent for gradient
+          elevation: 0, // Optional: removes shadow for a cleaner look
+          actions: screenWidth >= 1000
+              ? _buildAppBarActions() // Show options in AppBar for wide screens
+              : [], // Empty list to remove actions if screen is narrow
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              FadeInUp(
-                preferences:
-                    const AnimationPreferences(duration: Duration(seconds: 1)),
-                child: selfImage(),
-              ),
-              const SizedBox(height: 10),
-              FadeInLeft(child: const SectionTitle('Hello, I am')),
-              FadeInRight(
-                preferences: const AnimationPreferences(
-                  duration: Duration(milliseconds: 1100),
+      endDrawer: screenWidth < 1000
+          ? Drawer(
+        child: Container(
+          color: primaryColor,
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, secondaryColor],
+                  ),
                 ),
-                child: selfName(),
-              ),
-              const SizedBox(height: 10),
-              FadeInUp(
-                preferences: const AnimationPreferences(
-                  duration: Duration(milliseconds: 1200),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircleAvatar(
+                      radius: 40.0,
+                      child: Text(
+                        'SK',
+                        style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Mohd Sufyan Kamil',
+                      style: GoogleFonts.lora(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-                child: professionalTitle(),
               ),
-              StreamBuilder(
-                stream: _visitCountCollection.doc('count').snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator.adaptive();
-                  }
-
-                  return Container();
-                },
-              ),
-              const SizedBox(height: 20),
-              FadeInUp(
-                preferences: const AnimationPreferences(
-                  duration: Duration(milliseconds: 1300),
-                ),
-                child: keySkills(),
-              ),
-              const SizedBox(height: 20),
-              FadeInUp(
-                preferences: const AnimationPreferences(
-                  duration: Duration(milliseconds: 1400),
-                ),
-                child: aboutMe(),
-              ),
-              const SizedBox(height: 20),
+              ..._buildDrawerItems(),
             ],
           ),
         ),
+      )
+          : null, // Don't show drawer on larger screens
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [primaryColor, secondaryColor],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                FadeInUp(child: selfImage()),
+                const SizedBox(height: 10),
+                FadeInRight(
+                  child: Text(
+                    'Hi, I am',
+                    style: GoogleFonts.lora(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                FadeInLeft(
+                  child: selfName(),
+                ),
+                const SizedBox(height: 10),
+                FadeInUp(
+                  child: professionalTitle(),
+                ),
+                const SizedBox(height: 20),
+                FadeInUp(
+                  child: aboutMeCard(),
+                ),
+                const SizedBox(height: 30),
+                FadeInUp(
+                  child: keySkillsCard(),
+                ),
+                const SizedBox(height: 30),
+                hobbies(),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: contactMe(),
+    );
+  }
+
+  List<ListTile> _buildDrawerItems() {
+    return [
+      ListTile(
+        leading: const Icon(Icons.work_outline, color: Colors.white),
+        title: const Text('Professional Journey', style: TextStyle(color: Colors.white)),
+        onTap: () {
+          Navigator.pop(context); // Close the drawer
+          navigateToScreen(const ProfessionalJourney());
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.code, color: Colors.white),
+        title: const Text('Projects', style: TextStyle(color: Colors.white)),
+        onTap: () {
+          Navigator.pop(context); // Close the drawer
+          navigateToScreen(const ProjectsScreen());
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.school, color: Colors.white),
+        title: const Text('Courses & Certifications', style: TextStyle(color: Colors.white)),
+        onTap: () {
+          Navigator.pop(context); // Close the drawer
+          navigateToScreen(const CoursesCertificationsScreen());
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.work, color: Colors.white),
+        title: const Text('Work Experience', style: TextStyle(color: Colors.white)),
+        onTap: () {
+          Navigator.pop(context); // Close the drawer
+          navigateToScreen(const WorkExperienceScreen());
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.feedback, color: Colors.white),
+        title: const Text('Feedback', style: TextStyle(color: Colors.white)),
+        onTap: () {
+          Navigator.pop(context); // Close the drawer
+          navigateToScreen(const FeedbackScreen());
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _buildAppBarActions() {
+    return [
+      TextButton(
+        onPressed: () {
+          navigateToScreen(const ProfessionalJourney());
+        },
+        child: const Text(
+          'Professional Journey',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      TextButton(
+        onPressed: () {
+          navigateToScreen(const ProjectsScreen());
+        },
+        child: const Text(
+          'Projects',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      TextButton(
+        onPressed: () {
+          navigateToScreen(const CoursesCertificationsScreen());
+        },
+        child: const Text(
+          'Courses & Certifications',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      TextButton(
+        onPressed: () {
+          navigateToScreen(const WorkExperienceScreen());
+        },
+        child: const Text(
+          'Work Experience',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      TextButton(
+        onPressed: () {
+          navigateToScreen(const FeedbackScreen());
+        },
+        child: const Text(
+          'Feedback',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    ];
+  }
+
+  Widget aboutMeCard() {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: aboutMe(),
+      ),
+    );
+  }
+
+  Widget keySkillsCard() {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: keySkills(),
       ),
     );
   }
 
   Widget aboutMe() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SectionTitle('About Me'),
-        SizedBox(height: 10),
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'I am a Flutter Developer with a passion for creating intuitive and impactful mobile applications. I have 2+ years of experience in developing mobile applications using Flutter and Dart. I have worked on various projects ranging from small to large scale applications. I have also worked on various technologies like NodeJS, MongoDB, ExpressJS, HTML, CSS, JavaScript, Python, etc.',
-            style: TextStyle(fontSize: 16),
-          ),
+      children: [
+        const SectionTitle('About Me'),
+        const SizedBox(height: 10),
+        Text(
+          'I am a Flutter Developer with 3 years of experience in building mobile applications. '
+              'I specialize in creating clean, user-friendly, and impactful designs.',
+          style: GoogleFonts.roboto(fontSize: 16, color: Colors.grey[800]),
         ),
       ],
     );
@@ -267,90 +322,127 @@ class _HomepageState extends State<Homepage> {
       'Flutter',
       'Dart',
       'Firebase',
-      'NodeJS',
-      'MongoDB',
-      'ExpressJS',
-      'HTML',
-      'CSS',
-      'JavaScript',
-      'Python',
+      'REST APIs',
+      'UI/UX Design',
+      'Git & GitHub',
     ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      children: [
         const SectionTitle('Key Skills'),
         const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: skills
-                .map((skill) => Chip(
-                      label: Text(skill),
-                      backgroundColor: Colors.deepPurple,
-                      labelStyle: const TextStyle(color: Colors.white),
-                    ))
-                .toList(),
-          ),
+        Wrap(
+          spacing: 8,
+          children: skills
+              .map((skill) => Chip(
+            label: Text(skill),
+            backgroundColor: primaryColor,
+            labelStyle: const TextStyle(color: Colors.white),
+          ))
+              .toList(),
         ),
       ],
     );
   }
 
-  Text selfName() {
-    return const Text(
-      'Sufyan Kamil',
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    );
-  }
-
-  CircleAvatar selfImage() {
-    return const CircleAvatar(
-      radius: 50.0,
-      child: Text('SK',
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  Text professionalTitle() {
-    return const Text(
-      'Flutter Developer',
-      style: TextStyle(fontSize: 17, fontStyle: FontStyle.italic),
-    );
-  }
-}
-
-class nameIconWIdget extends StatelessWidget {
-  const nameIconWIdget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircleAvatar(
-      radius: 50.0,
-      child: Text('SK',
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-    );
-  }
-}
-
-class nameWidget extends StatelessWidget {
-  const nameWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: MediaQuery.of(context).size.width,
-      child: const Text(
-        'Mohd Sufyan Asghar Kamil',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        softWrap: true,
+  Widget hobbies() {
+    return FadeInUp(
+      child: Card(
+        elevation: 4, // Adds shadow for a lifted effect
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Rounded corners
+        ),
+        margin: const EdgeInsets.all(8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionTitle('Hobbies'),
+              const SizedBox(height: 10),
+              Text(
+                'When I am not coding, you can find me exploring new tech trends, traveling, and learning new skills.',
+                style: GoogleFonts.roboto(fontSize: 16, color: Colors.grey[800]),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget selfImage() {
+    return FadeInUp(
+      child: CircleAvatar(
+        radius: 50.0,
+        backgroundColor: primaryColor,
+        child: const Text('SK',
+            style: TextStyle(
+                fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white)),
+      ),
+    );
+  }
+
+  Widget selfName() {
+    return Text(
+      'Mohd Sufyan Kamil',
+      style: GoogleFonts.roboto(
+          fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+    );
+  }
+
+  Widget professionalTitle() {
+    return Text(
+      'Flutter Developer',
+      style: GoogleFonts.lora(fontSize: 20, color: Colors.white),
+    );
+  }
+
+  Widget contactMe() {
+    return FloatingActionButton(
+      onPressed: () async {
+        const String subject = 'Hello';
+
+        const String body = 'I would like to get in touch!';
+
+        final Uri _emailLaunchUri = Uri(
+          scheme: 'mailto',
+          path: 'sufyankamil15@gmail.com',
+          queryParameters: {
+            'subject': subject,
+            'body': body,
+          },
+        );
+
+        if (await canLaunchUrl(_emailLaunchUri)) {
+          await launchUrl(_emailLaunchUri);
+        } else {
+          _showErrorDialog();
+        }
+      },
+      backgroundColor: Colors.deepPurple,
+      child: const Icon(Icons.email, color: Colors.white),
+    );
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Could not open the email client. Please check your email configuration.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();  // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
